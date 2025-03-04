@@ -21,17 +21,17 @@ async def on_startup(bot: Bot):
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
-    markup = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="Ilovani ochish",
-                    web_app=WebAppInfo(url=f'https://astron-web-app.vercel.app'),
-                )
-            ]
-        ]
-    )
-    await message.answer(f"\"ASTRON - onlayn repetitor\" loyihasining Telegramdagi ilovasi.", reply_markup=markup)
+    # markup = InlineKeyboardMarkup(
+    #     inline_keyboard=[
+    #         [
+    #             InlineKeyboardButton(
+    #                 text="Ilovani ochish",
+    #                 web_app=WebAppInfo(url=f'https://astron-web-app.vercel.app'),
+    #             )
+    #         ]
+    #     ]
+    # )
+    await message.answer(f"\"ASTRON - onlayn repetitor\" loyihasining Telegramdagi ilovasi.")
 
 
 async def main() -> None:
