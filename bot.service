@@ -10,7 +10,7 @@ MemoryLimit=1G
 User=root
 Group=root
 WorkingDirectory=/root/astronbot
-ExecStart=/root/astron/venv/bin/python3 /root/astronbot/main.py
+ExecStart=/root/astronbot/venv/bin/python3 /root/astronbot/main.py
 
 [Install]
 WantedBy=multi-user.target
