@@ -1,16 +1,26 @@
 import sys
 import asyncio
 import logging
+import os
+import dotenv
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, MenuButtonWebApp
 
-TOKEN = "8157851127:AAE3OnIrHiggFB5r3V9r6qIBJ0fOTo2PHxQ"
+
+dotenv.load_dotenv()
+
+
+TOKEN = os.getenv("TOKEN")
+ADMIN = os.getenv("ADMIN")
+print(ADMIN)
 
 
 dp = Dispatcher()
+bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+
 
 
 async def on_startup(bot: Bot):
@@ -21,21 +31,25 @@ async def on_startup(bot: Bot):
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
-    # markup = InlineKeyboardMarkup(
-    #     inline_keyboard=[
-    #         [
-    #             InlineKeyboardButton(
-    #                 text="Ilovani ochish",
-    #                 web_app=WebAppInfo(url=f'https://astron-web-app.vercel.app'),
-    #             )
-    #         ]
-    #     ]
-    # )
-    await message.answer(f"\"ASTRON - onlayn repetitor\" loyihasining Telegramdagi ilovasi.")
+    await message.answer("""Assalomu aleykum.
+
+"ASTRON - onlayn repetitor" loyihasining ilovasiga xush kelibsiz!!!
+
+- Ilovadan foydalanish uchun pastgi chap burchakdagi "Ilovani ochish" tugmasiga bosing.
+
+- Murojaat yo'llash uchun ushbu botga yozing.""")
+
+
+@dp.message()
+async def any_message_handler(message: Message) -> None:
+    if message.from_user.id == int(ADMIN):
+        if (message.reply_to_message):
+            await bot.send_message(message.reply_to_message.forward_from.id, message.text)
+    else:
+        await bot.forward_message(chat_id=int(ADMIN), from_chat_id=message.from_user.id, message_id=message.message_id)
 
 
 async def main() -> None:
-    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp.startup.register(on_startup)
     await dp.start_polling(bot)
 
