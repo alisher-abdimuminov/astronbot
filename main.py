@@ -10,7 +10,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, MenuButtonWebApp
 
 
-dotenv.load_dotenv()
+dotenv.load_dotenv(".env")
 
 
 TOKEN = os.getenv("TOKEN")
@@ -44,10 +44,10 @@ async def command_start_handler(message: Message) -> None:
 async def any_message_handler(message: Message) -> None:
     if message.from_user.id == int(ADMIN):
         if (message.reply_to_message):
-            print(message.reply_to_message)
-            await bot.send_message(message.reply_to_message.forward_from.id, message.text)
+            user_id = message.reply_to_message.text.split("\n")[-1]
+            await bot.send_message(user_id, message.text)
     else:
-        await bot.forward_message(chat_id=int(ADMIN), from_chat_id=message.from_user.id, message_id=message.message_id)
+        await bot.send_message(chat_id=int(ADMIN), text=f"{message.from_user.first_name} {message.from_user.last_name if message.from_user.last_name else ''}\n{'t.me/' + message.from_user.username if message.from_user.username else ''}\n\n{message.text}\n{message.from_user.id}")
 
 
 async def main() -> None:
