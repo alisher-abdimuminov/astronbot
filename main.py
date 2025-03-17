@@ -44,6 +44,7 @@ async def command_start_handler(message: Message) -> None:
 async def any_message_handler(message: Message) -> None:
     if message.from_user.id == int(ADMIN):
         if (message.reply_to_message):
+            print(message.reply_to_message)
             await bot.send_message(message.reply_to_message.forward_from.id, message.text)
     else:
         await bot.forward_message(chat_id=int(ADMIN), from_chat_id=message.from_user.id, message_id=message.message_id)
