@@ -26,7 +26,7 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 async def on_startup(bot: Bot):
     print("set menu button")
     await bot.set_chat_menu_button(
-        menu_button=MenuButtonWebApp(text="Ilovani ochish", web_app=WebAppInfo(url=f"https://resplendent-blancmange-00a856.netlify.app"))
+        menu_button=MenuButtonWebApp(text="Ilovani ochish", web_app=WebAppInfo(url=f"https://astron-web-app.vercel.app"))
     )
 
 @dp.message(CommandStart())
