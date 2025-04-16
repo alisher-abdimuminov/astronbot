@@ -6,8 +6,34 @@ import dotenv
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram import Bot, Dispatcher, html
+from threading import Thread
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, MenuButtonWebApp
+
+
+
+
+def send_message(bot: Bot, text: str):
+    try:
+        users = ""
+
+        with open("users.txt", "r") as users_file:
+            users = users_file.read()
+
+        for user in users:
+            bot.send_message(user, text)
+    except Exception as e:
+        print(e)
+
+
+class Worker(Thread):
+    def __init__(self, bot: Bot, text: str):
+        self.bot = bot
+        self.text = text
+        super().__init__()
+
+    def run(self):
+        send_message(self.bot, self.text)
 
 
 dotenv.load_dotenv(".env")
@@ -47,6 +73,9 @@ async def any_message_handler(message: Message) -> None:
             user_id = message.reply_to_message.text.split("\n")[-1]
             await bot.send_message(user_id, message.text)
     else:
+        if message.text == "send":
+            worker = Worker(bot, "Salom")
+            worker.start()
         await bot.send_message(chat_id=int(ADMIN), text=f"{message.from_user.first_name} {message.from_user.last_name if message.from_user.last_name else ''}\n{'t.me/' + message.from_user.username if message.from_user.username else ''}\n\n{message.text}\n{message.from_user.id}")
 
 
