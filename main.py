@@ -21,20 +21,20 @@ async def send_message(bot: Bot, text: str):
             users = users_file.read()
 
         for user in users:
-            bot.send_message(user, text)
+            await bot.send_message(user, text)
     except Exception as e:
         print(e)
 
 
 class Worker(Thread):
-    def __init__(self, bot: Bot, text: str):
+    def __init__(self, bot: Bot, text: str, loop: asyncio.AbstractEventLoop):
         self.bot = bot
         self.text = text
+        self.loop = loop
         super().__init__()
 
     async def run(self):
-        await send_message(self.bot, self.text)
-
+        asyncio.run_coroutine_threadsafe(send_message(self.bot, self.text), self.loop)
 
 dotenv.load_dotenv(".env")
 
@@ -74,7 +74,7 @@ async def any_message_handler(message: Message) -> None:
             await bot.send_message(user_id, message.text)
     else:
         if message.text == "send":
-            worker = Worker(bot, "Salom")
+            worker = Worker(bot, "Salom", asyncio.get_running_loop())
             worker.start()
         await bot.send_message(chat_id=int(ADMIN), text=f"{message.from_user.first_name} {message.from_user.last_name if message.from_user.last_name else ''}\n{'t.me/' + message.from_user.username if message.from_user.username else ''}\n\n{message.text}\n{message.from_user.id}")
 
