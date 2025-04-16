@@ -13,7 +13,7 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, W
 
 
 
-def send_message(bot: Bot, text: str):
+async def send_message(bot: Bot, text: str):
     try:
         users = ""
 
@@ -32,8 +32,8 @@ class Worker(Thread):
         self.text = text
         super().__init__()
 
-    def run(self):
-        send_message(self.bot, self.text)
+    async def run(self):
+        await send_message(self.bot, self.text)
 
 
 dotenv.load_dotenv(".env")
