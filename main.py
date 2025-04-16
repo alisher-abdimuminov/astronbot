@@ -4,7 +4,7 @@ import logging
 import os
 import dotenv
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram import Bot, Dispatcher, html
 from threading import Thread
 from aiogram.client.default import DefaultBotProperties
@@ -14,32 +14,25 @@ from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, W
 
 
 async def send_message(bot: Bot, text: str):
-    try:
-        users = ""
+    users = ""
 
-        with open("users.txt", "r") as users_file:
-            users = users_file.read()
+    with open("users.txt", "r") as users_file:
+        users = users_file.read().strip()
 
-        for user in users:
+    for user in users.split("\n"):
+        print("user", user)
+        try:
             await bot.send_message(user, text)
-    except Exception as e:
-        print(e)
+            await asyncio.sleep(0.05)
+        except Exception as e:
+            print("Error: chat not found")
 
-
-class Worker(Thread):
-    def __init__(self, bot: Bot, text: str, loop: asyncio.AbstractEventLoop):
-        self.bot = bot
-        self.text = text
-        self.loop = loop
-        super().__init__()
-
-    async def run(self):
-        asyncio.run_coroutine_threadsafe(send_message(self.bot, self.text), self.loop)
 
 dotenv.load_dotenv(".env")
 
 
 TOKEN = os.getenv("TOKEN")
+# TOKEN = "7854066706:AAGDV9_DgigT2QAe4zfNZjsly9hi4ECxt7c"
 ADMIN = os.getenv("ADMIN")
 print(ADMIN)
 
@@ -64,18 +57,34 @@ async def command_start_handler(message: Message) -> None:
 - Ilovadan foydalanish uchun pastgi chap burchakdagi "Ilovani ochish" tugmasiga bosing.
 
 - Murojaat yo'llash uchun ushbu botga yozing.""")
+    users = ""
+
+    with open("users.txt", "r") as users_file:
+        users = users_file.read().strip()
+    
+    if str(message.from_user.id) not in users:
+        with open("users.txt", "a") as users_file:
+            users_file.write("\n" + str(message.from_user.id) + "\n")
+
+
+@dp.message(Command("stats"))
+async def stats(message: Message) -> None:
+    users = ""
+
+    with open("users.txt", "r") as users_file:
+        users = users_file.read().strip().split()
+    await message.answer(f"Foydalanuvchilar soni: {len(users)}")
 
 
 @dp.message()
 async def any_message_handler(message: Message) -> None:
     if message.from_user.id == int(ADMIN):
+        if "send" in  message.text:
+            asyncio.create_task(send_message(bot, message.text.replace("send", "")))
         if (message.reply_to_message):
             user_id = message.reply_to_message.text.split("\n")[-1]
             await bot.send_message(user_id, message.text)
     else:
-        if message.text == "send":
-            worker = Worker(bot, "Salom", asyncio.get_running_loop())
-            worker.start()
         await bot.send_message(chat_id=int(ADMIN), text=f"{message.from_user.first_name} {message.from_user.last_name if message.from_user.last_name else ''}\n{'t.me/' + message.from_user.username if message.from_user.username else ''}\n\n{message.text}\n{message.from_user.id}")
 
 
