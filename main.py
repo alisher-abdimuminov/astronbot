@@ -1,14 +1,13 @@
+import os
 import sys
+import dotenv
 import asyncio
 import logging
-import os
-import dotenv
+from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command
-from aiogram import Bot, Dispatcher, html
-from threading import Thread
 from aiogram.client.default import DefaultBotProperties
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, MenuButtonWebApp
+from aiogram.types import Message, WebAppInfo, MenuButtonWebApp
 
 
 
@@ -26,6 +25,10 @@ async def send_message(bot: Bot, text: str):
             await asyncio.sleep(0.05)
         except Exception as e:
             print("Error: chat not found")
+            users = users.replace(user, "")
+    with open("users.txt", "w") as users_file:
+        users_file.write(users)
+    await bot.send_message(int(ADMIN), "Reklama foydalanuvchilarga yuborildi.")
 
 
 dotenv.load_dotenv(".env")
@@ -47,6 +50,7 @@ async def on_startup(bot: Bot):
     await bot.set_chat_menu_button(
         menu_button=MenuButtonWebApp(text="Ilovani ochish", web_app=WebAppInfo(url=f"https://astron-web-app.vercel.app"))
     )
+
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
