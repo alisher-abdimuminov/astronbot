@@ -83,12 +83,12 @@ async def stats(message: Message) -> None:
 @dp.message()
 async def any_message_handler(message: Message) -> None:
     message.answer("- Murojaat yo'llash uchun @astron_corp ga yozing.")
-    # if message.from_user.id == int(ADMIN):
-    #     if "send" in  message.text:
-    #         asyncio.create_task(send_message(bot, message.text.replace("send", "")))
-    #     if (message.reply_to_message):
-    #         user_id = message.reply_to_message.text.split("\n")[-1]
-    #         await bot.send_message(user_id, message.text)
+    if message.from_user.id == int(ADMIN):
+        if "send" in  message.text:
+            asyncio.create_task(send_message(bot, message.text.replace("send", "")))
+        if (message.reply_to_message):
+            user_id = message.reply_to_message.text.split("\n")[-1]
+            await bot.send_message(user_id, message.text)
     # else:
     #     await bot.send_message(chat_id=int(ADMIN), text=f"{message.from_user.first_name} {message.from_user.last_name if message.from_user.last_name else ''}\n{'t.me/' + message.from_user.username if message.from_user.username else ''}\n\n{message.text}\n{message.from_user.id}")
 
