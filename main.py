@@ -23,7 +23,7 @@ async def send_message(bot: Bot, text: str):
         try:
             await bot.send_message(user, text)
             await asyncio.sleep(0.05)
-        except Exception as e:
+        except Exception:
             print("Error: chat not found")
             users = users.replace(user, "")
     with open("users.txt", "w") as users_file:
@@ -48,7 +48,7 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 async def on_startup(bot: Bot):
     print("set menu button")
     await bot.set_chat_menu_button(
-        menu_button=MenuButtonWebApp(text="Ilovani ochish", web_app=WebAppInfo(url=f"https://astron-web-app.vercel.app"))
+        menu_button=MenuButtonWebApp(text="Ilovani ochish", web_app=WebAppInfo(url="https://webapp.astron.uz"))
     )
 
 
